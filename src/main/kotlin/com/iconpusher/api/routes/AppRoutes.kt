@@ -19,6 +19,16 @@ fun Route.appRouting() {
             call.respondText(Gson().toJson(results))
         }
     }
+
+    get("/package/{packageName}") {
+        val packageName = call.parameters["packageName"] ?: return@get call.respondText(
+            "Missing or malformed package name",
+            status = HttpStatusCode.BadRequest
+        )
+
+        val app = App.load(packageName)
+        call.respondText(Gson().toJson(app))
+    }
 }
 
 fun Application.registerAppRoutes() {

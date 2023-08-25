@@ -4,6 +4,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.jetty.*
 import com.iconpusher.api.plugins.*
 import com.iconpusher.api.routes.registerAppRoutes
+import com.iconpusher.api.routes.registerGroupRoutes
 import io.ktor.server.application.*
 
 fun main() {
@@ -27,4 +28,5 @@ fun begin(app: Application)
     app.configureSecurity()
     app.configureRouting()
     app.registerAppRoutes()
+    app.registerGroupRoutes()
 }

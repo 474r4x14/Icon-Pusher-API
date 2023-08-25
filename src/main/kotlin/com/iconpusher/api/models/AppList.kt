@@ -17,6 +17,10 @@ class AppList {
                     .join(AppTable, JoinType.LEFT,additionalConstraint = {
                         ComponentTable.appId eq AppTable.id
                     })
+                    .join(VersionTable, JoinType.INNER, additionalConstraint = {
+                        (VersionTable.appId eq AppTable.id) and
+                        (VersionTable.latest eq true)
+                    })
                     .select {
                         (
                             (AppTable.hasImage eq true) or
@@ -33,6 +37,9 @@ class AppList {
                 val app = App()
                 app.id = result[AppTable.id].value
                 app.name = result[AppTable.name]
+                app.packageName = result[AppTable.packageName]
+                app.icon = "https://img.iconpusher.com/${app.packageName}/${result[VersionTable.name]}.${result[VersionTable.extension]}"
+                app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
 //                populateComponents(app)
                 // TODO might want to change this to get all app packages in one query
@@ -41,19 +48,42 @@ class AppList {
             populateComponents(appList)
             return appList
         }
-
-        fun populateComponents(app:App)
+        
+        
+        fun latest():AppList
         {
             DB.start()
+            val appList = AppList()
             val results = transaction {
-                ComponentTable
-                .select{ComponentTable.appId eq app.id}
+                AppTable
+                .join(VersionTable, JoinType.INNER, additionalConstraint = {
+                    (VersionTable.appId eq AppTable.id) and
+                    (VersionTable.latest eq true)
+                })
+                .selectAll()
+                .orderBy(AppTable.dateAdded, SortOrder.DESC)
+                .limit(24)
                 .toList()
             }
+            
             for (result in results) {
-                app.packages.add(result[ComponentTable.componentInfo])
+                val app = App()
+                app.id = result[AppTable.id].value
+                app.name = result[AppTable.name]
+                app.packageName = result[AppTable.packageName]
+                app.icon = "https://img.iconpusher.com/${app.packageName}/${result[VersionTable.name]}.${result[VersionTable.extension]}"
+                app.version = result[VersionTable.name]
+                //app.packages.add(result[ComponentTable.componentInfo])
+//                populateComponents(app)
+                // TODO might want to change this to get all app packages in one query
+                appList.apps.add(app)
             }
+            populateComponents(appList)
+            
+            
+            return appList
         }
+        
 
         fun populateComponents(appList: AppList)
         {
@@ -76,7 +106,7 @@ class AppList {
             for (result in results) {
                 val appId = result[ComponentTable.appId].value
                 if (appMap.containsKey(appId)) {
-                    appMap[appId]?.packages?.add(result[ComponentTable.componentInfo])
+                    appMap[appId]?.components?.add(result[ComponentTable.componentInfo])
                 }
             }
         }
