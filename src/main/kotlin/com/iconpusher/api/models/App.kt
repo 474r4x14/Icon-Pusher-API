@@ -6,7 +6,6 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.google.gson.Gson
-import com.iconpusher.api.DB
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -23,7 +22,6 @@ class App
 
     companion object {
         fun load(packageName: String): App? {
-            DB.start()
             val appData = transaction {
                 AppTable
                 .join(VersionTable, JoinType.LEFT, additionalConstraint = {
@@ -48,7 +46,6 @@ class App
 
         fun populateComponents(app:App)
         {
-            DB.start()
             val results = transaction {
                 ComponentTable
                 .select{ComponentTable.appId eq app.id}

@@ -1,6 +1,5 @@
 package com.iconpusher.api.models
 
-import com.iconpusher.api.DB
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -11,7 +10,7 @@ class AppList {
         {
             val appList = AppList()
 
-            DB.start()
+//            DB.start()
             val results = transaction {
                 ComponentTable
                     .join(AppTable, JoinType.LEFT,additionalConstraint = {
@@ -52,7 +51,7 @@ class AppList {
         
         fun latest():AppList
         {
-            DB.start()
+//            DB.start()
             val appList = AppList()
             val results = transaction {
                 AppTable
@@ -96,7 +95,7 @@ class AppList {
                 appMap[app.id] = app
             }
 
-            DB.start()
+//            DB.start()
             val results = transaction {
                 ComponentTable
                 .select{ComponentTable.appId inList appIds}
