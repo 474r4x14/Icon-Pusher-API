@@ -15,7 +15,7 @@ object ComponentTable : IntIdTable(){
     var appId = reference("app_id",AppTable.id)
     var componentInfo = varchar("component_info",1280)
     var dateAdded = datetime("date_added")
-    var logoCreatedData = datetime("logo_created_date")
-    var latest = bool("latest")
-    var processed = bool("processed")
+    var logoCreatedData = datetime("logo_created_date").nullable()
+    var latest = bool("latest").nullable()
+    var processed = bool("processed").nullable()
 }

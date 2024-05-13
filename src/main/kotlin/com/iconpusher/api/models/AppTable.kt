@@ -15,8 +15,9 @@ object AppTable : IntIdTable(){
     var name = varchar("name", 128)
     var packageName = varchar("package_name", 128)
     var dateAdded = datetime("date_added")
-    var hasImage = bool("has_image")
+    var hasImage = bool("has_image").default(false)
     var latestImage = datetime("latest_image").nullable()
     var dead = bool("dead")
 
+    var dead = bool("dead").default(false)
 }
