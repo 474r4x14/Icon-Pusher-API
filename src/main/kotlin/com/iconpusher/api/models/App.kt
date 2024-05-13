@@ -37,7 +37,11 @@ class App
                 app.name = appData[AppTable.name]
                 app.packageName = appData[AppTable.packageName]
                 app.version = appData[VersionTable.name]
-                app.icon = "https://img.iconpusher.com/${app.packageName}/${appData[VersionTable.name]}.${appData[VersionTable.extension]}"
+                if (appData[AppTable.iconRemoved]) {
+                    app.icon = "https://img.iconpusher.com/removed.png"
+                } else {
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${appData[VersionTable.name]}.${appData[VersionTable.extension]}"
+                }
                 populateComponents(app)
                 return app
             }

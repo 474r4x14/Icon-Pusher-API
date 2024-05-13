@@ -17,7 +17,6 @@ object AppTable : IntIdTable(){
     var dateAdded = datetime("date_added")
     var hasImage = bool("has_image").default(false)
     var latestImage = datetime("latest_image").nullable()
-    var dead = bool("dead")
-
     var dead = bool("dead").default(false)
+    var iconRemoved = bool("icon_removed").default(false)
 }
