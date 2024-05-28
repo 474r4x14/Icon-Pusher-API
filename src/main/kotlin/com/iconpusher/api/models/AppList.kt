@@ -86,6 +86,50 @@ class AppList {
             
             return appList
         }
+
+        fun device(token:String):AppList
+        {
+            val appList = AppList()
+
+            val results = transaction {
+                RequestTable
+                    .join(AppTable, JoinType.LEFT,additionalConstraint = {
+                        RequestTable.appId eq AppTable.id
+                    })
+                    .join(VersionTable, JoinType.INNER, additionalConstraint = {
+                        (VersionTable.appId eq AppTable.id) and
+                                (VersionTable.latest eq true)
+                    })
+                    .select {
+                        (
+                                (AppTable.hasImage eq true) or
+                                        (AppTable.latestImage neq null)
+                                ) and (
+                                (RequestTable.androidId eq token)
+                                )
+                    }
+                    .groupBy(AppTable.id)
+                    .toList()
+            }
+            for (result in results) {
+                val app = App()
+                app.id = result[AppTable.id].value
+                app.name = result[AppTable.name]
+                app.packageName = result[AppTable.packageName]
+                if (result[AppTable.iconRemoved]) {
+                    app.icon = "https://img.iconpusher.com/removed.png"
+                } else {
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name]}.${result[VersionTable.extension]}"
+                }
+                app.version = result[VersionTable.name]
+                //app.packages.add(result[ComponentTable.componentInfo])
+//                populateComponents(app)
+                // TODO might want to change this to get all app packages in one query
+                appList.apps.add(app)
+            }
+            populateComponents(appList)
+            return appList
+        }
         
 
         fun populateComponents(appList: AppList)

@@ -20,6 +20,18 @@ fun Route.appRouting() {
         }
     }
 
+    route ("/device") {
+        get("/{token}") {
+            val token = call.parameters["token"] ?: return@get call.respondText(
+                "Missing or malformed search",
+                status = HttpStatusCode.BadRequest
+            )
+
+            val results = AppList.device(token)
+            call.respondText(Gson().toJson(results))
+        }
+    }
+
     get("/package/{packageName}") {
         val packageName = call.parameters["packageName"] ?: return@get call.respondText(
             "Missing or malformed package name",
