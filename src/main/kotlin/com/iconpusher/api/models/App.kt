@@ -6,7 +6,14 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.google.gson.Gson
+import com.iconpusher.api.models.AppTable.bool
+import com.iconpusher.api.models.AppTable.default
+import com.iconpusher.api.models.AppTable.nullable
+import com.iconpusher.api.models.AppTable.varchar
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
+import org.jetbrains.exposed.sql.jodatime.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class App
@@ -63,6 +70,54 @@ class App
                 //app.components.add(component)
                 app.components.add(name)
             }
+        }
+
+        fun checkVersionExists(app:App, version:String):Boolean
+        {
+            val response = transaction {
+                VersionTable.select((VersionTable.appId eq app.id) and (VersionTable.name eq version)).singleOrNull()
+            }
+            return response != null
+        }
+
+        fun addVersion(app:App, version:String)
+        {
+            transaction {
+                // Mark all existing versions of the app as old
+                VersionTable.update ({VersionTable.appId eq app.id}){
+                    it[VersionTable.latest] = false
+                }
+
+                VersionTable.insert {
+                    it[VersionTable.name] = version
+                    it[VersionTable.appId] = app.id
+                    it[VersionTable.extension] = "png"
+                    it[VersionTable.dateCreated] = CurrentDateTime
+                    it[VersionTable.latest] = true
+                }
+            }
+        }
+
+        fun create(app: UploadApp)
+        {
+            val insertId = transaction {
+                AppTable.insert {
+                    it[AppTable.name] = app.appName
+                    it[AppTable.packageName] = app.packageName
+                    it[AppTable.dateAdded] = CurrentDateTime
+                    it[AppTable.hasImage] = true
+                }[AppTable.id].value
+            }
+            transaction {
+                ComponentTable.insert {
+                    it[ComponentTable.appId] = insertId
+                    it[ComponentTable.componentInfo] = app.componentInfo
+                    it[ComponentTable.dateAdded] = CurrentDateTime
+                }
+            }
+            val tmpApp = App()
+            tmpApp.id = insertId
+            addVersion(tmpApp, app.version)
         }
     }
 }

@@ -1,9 +1,6 @@
 package com.iconpusher.api.plugins
 
-import com.iconpusher.api.models.App
-import com.iconpusher.api.models.AppTable
-import com.iconpusher.api.models.ComponentTable
-import com.iconpusher.api.models.ContactTable
+import com.iconpusher.api.models.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -36,5 +33,6 @@ fun Application.configureDatabases() {
         SchemaUtils.createMissingTablesAndColumns(AppTable)
         SchemaUtils.createMissingTablesAndColumns(ComponentTable)
         SchemaUtils.createMissingTablesAndColumns(ContactTable)
+        SchemaUtils.createMissingTablesAndColumns(VersionTable)
     }
 }
