@@ -98,7 +98,7 @@ class App
             }
         }
 
-        fun create(app: UploadApp)
+        fun create(app: UploadApp):App
         {
             val insertId = transaction {
                 AppTable.insert {
@@ -118,6 +118,7 @@ class App
             val tmpApp = App()
             tmpApp.id = insertId
             addVersion(tmpApp, app.version)
+            return tmpApp
         }
     }
 }

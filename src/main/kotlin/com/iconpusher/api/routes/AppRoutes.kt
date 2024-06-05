@@ -7,11 +7,15 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.CoroutineStart
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
+import org.jetbrains.exposed.sql.replace
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 
@@ -60,7 +64,7 @@ fun Route.appRouting() {
         var addImage = true
 
         // Let's see if the app exists
-        val appCheck = App.load(app.packageName)
+        var appCheck = App.load(app.packageName)
         if (appCheck is App) {
             // If the app exists, let's check the version
             if (!App.checkVersionExists(appCheck,app.version)) {
@@ -83,45 +87,46 @@ fun Route.appRouting() {
         } else {
             // App is new, let's add it
             addImage = true
-            App.create(app)
+            appCheck = App.create(app)
         }
 
         // Add in the request data
+        transaction {
+            RequestTable.replace {
+                it[androidId] = app.androidId
+                it[appId] = appCheck.id
+                it[dateCreated] = CurrentDateTime
+                it[iconPack] = app.iconPack
+            }
+        }
 
 
-
-        if (appCheck is App && addImage) {
+//        if (appCheck is App && addImage) {
             // While crossing over from v1 to v2, we need to handle both method for images
             // Because each version has a different naming convention & location
 
             // V1 image handling
-            val appId = 0
-//            val oldImgDir = "/var/www/vhosts/iconpusher.com/www/htdocs/images/icons/$appId.png"
-            val oldImgDir = "C:/Users/os/tmp/icons/${appCheck.id}.png"
+            val oldImgDir = "/var/www/vhosts/iconpusher.com/www/htdocs/images/icons/${appCheck.id}"
+            val oldImgFile = "$oldImgDir/${app.version}.png"
 
             // V2 image handling
-            val pkg = "my.package"
-            val version = "1"
-//            val newImgDir = "/var/www/vhosts/iconpusher.com/img/htdocs/$pkg/$version.png"
-            val newImgDir = "/var/www/vhosts/iconpusher.com/img/htdocs/$pkg/$version.png"
+            val newImgDir = "/var/www/vhosts/iconpusher.com/img/htdocs/${app.packageName}"
+            val newImgFile = "$newImgDir/${app.version}.png"
 
             // Convert the image from Base64 to data
-
-            // decode base64 string
             val decodedBytes = Base64.getDecoder().decode(app.icon)
 
-
-            File(oldImgDir).writeBytes(decodedBytes)
-            File(newImgDir).writeBytes(decodedBytes)
+        if (!File(newImgFile).exists()) {
+            File(newImgDir).mkdir()
+            File(newImgFile).writeBytes(decodedBytes)
         }
 
+        if (!File(oldImgFile).exists()) {
+            File(oldImgDir).mkdir()
+            File(oldImgFile).writeBytes(decodedBytes)
+        }
 
-
-//        val app = App.load(packageName)
         call.respondText(Gson().toJson(app))
-
-
-
     }
 }
 

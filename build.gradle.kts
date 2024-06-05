@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.iconpusher.api"
-version = "0.2.0"
+version = "0.3.2"
 application {
     mainClass.set("io.ktor.server.jetty.EngineMain")
 

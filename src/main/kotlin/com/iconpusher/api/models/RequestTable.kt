@@ -14,6 +14,8 @@ object RequestTable : Table(){
     override val tableName = "request"
     val androidId = varchar("android_id",128)
     val appId = reference("app_id", AppTable.id)
+    val dateCreated = datetime("date_created")
+    val iconPack = varchar("icon_pack",256)
     override val primaryKey = PrimaryKey(
         androidId, appId,
         name = "PK-ANDROID_ID-APP_ID"
