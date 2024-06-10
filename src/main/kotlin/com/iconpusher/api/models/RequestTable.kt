@@ -2,6 +2,7 @@ package com.iconpusher.api.models
 
 //import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.jodatime.datetime
 
@@ -13,7 +14,7 @@ object RequestTable : Table(){
     @Transient
     override val tableName = "request"
     val androidId = varchar("android_id",128)
-    val appId = reference("app_id", AppTable.id)
+    val appId = reference("app_id", AppTable.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val dateCreated = datetime("date_created")
     val iconPack = varchar("icon_pack",256)
     override val primaryKey = PrimaryKey(

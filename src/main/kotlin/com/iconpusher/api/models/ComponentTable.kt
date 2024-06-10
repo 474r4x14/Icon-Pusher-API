@@ -2,6 +2,7 @@ package com.iconpusher.api.models
 
 //import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.jodatime.datetime
 
 
@@ -12,7 +13,7 @@ object ComponentTable : IntIdTable(){
     @Transient
     override val tableName = "component_info"
 //    var appId = integer("app_id")
-    var appId = reference("app_id",AppTable.id)
+    var appId = reference("app_id",AppTable.id,ReferenceOption.CASCADE,ReferenceOption.CASCADE)
     var componentInfo = varchar("component_info",1280)
     var dateAdded = datetime("date_added")
     var logoCreatedDate = datetime("logo_created_date").nullable()

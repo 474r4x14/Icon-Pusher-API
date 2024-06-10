@@ -15,7 +15,7 @@ object VersionTable : Table(){
     override val tableName = "version"
     var name = varchar("name", 128)
     var extension = varchar("extension", 128)
-    var appId = reference("app_id",AppTable.id)
+    var appId = reference("app_id",AppTable.id,ReferenceOption.CASCADE,ReferenceOption.CASCADE)
     var dateCreated = datetime("date_created")
     var latest = bool("latest")
 }
