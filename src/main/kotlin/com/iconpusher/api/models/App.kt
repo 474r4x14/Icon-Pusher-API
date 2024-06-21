@@ -23,6 +23,7 @@ class App
     var packageName = ""
     var version = ""
     var components = ArrayList<String>()
+    var versions = ArrayList<String>()
     var icon = ""
     //var rating: Float = 50f
 	//var approved:Boolean = false
@@ -50,6 +51,7 @@ class App
                     app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${appData[VersionTable.name]}.${appData[VersionTable.extension]}"
                 }
                 populateComponents(app)
+                populateVersions(app)
                 return app
             }
             return null
@@ -119,6 +121,19 @@ class App
             tmpApp.id = insertId
             addVersion(tmpApp, app.version)
             return tmpApp
+        }
+
+        fun populateVersions(app:App)
+        {
+            val results = transaction {
+                VersionTable
+                .select{ComponentTable.appId eq app.id}
+                .toList()
+            }
+            for (result in results) {
+                val name = result[ComponentTable.componentInfo]
+                app.versions.add(name)
+            }
         }
     }
 }
