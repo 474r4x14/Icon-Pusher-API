@@ -127,11 +127,11 @@ class App
         {
             val results = transaction {
                 VersionTable
-                .select{ComponentTable.appId eq app.id}
+                .select{VersionTable.appId eq app.id}
                 .toList()
             }
             for (result in results) {
-                val name = result[ComponentTable.componentInfo]
+                val name = result[VersionTable.name]
                 app.versions.add(name)
             }
         }
