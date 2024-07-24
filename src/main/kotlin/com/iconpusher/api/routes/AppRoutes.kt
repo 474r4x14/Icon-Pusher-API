@@ -77,9 +77,10 @@ fun Route.appRouting() {
                 // Let's add it
                 transaction {
                     ComponentTable.insert {
-                        it[ComponentTable.appId] = appId
+                        it[ComponentTable.appId] = appCheck!!.id
                         it[ComponentTable.componentInfo] = app.componentInfo
                         it[ComponentTable.dateAdded] = CurrentDateTime
+                        it[ComponentTable.latest] = true
                     }
                 }
             }
