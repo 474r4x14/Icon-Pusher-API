@@ -48,7 +48,7 @@ class App
                 if (appData[AppTable.iconRemoved]) {
                     app.icon = "https://img.iconpusher.com/removed.png"
                 } else {
-                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${appData[VersionTable.name]}.${appData[VersionTable.extension]}"
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${appData[VersionTable.name].replace("/", "-")}.${appData[VersionTable.extension]}"
                 }
                 populateComponents(app)
                 populateVersions(app)
