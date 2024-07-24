@@ -12,6 +12,11 @@ fun Route.GroupRouting() {
         val app = AppList.latest()
         call.respondText(Gson().toJson(app))
     }
+    // TODO replace the original latest (above) once change is established
+    get("/latest-new") {
+        val app = AppList.latestNew()
+        call.respondText(Gson().toJson(app))
+    }
 }
 
 fun Application.registerGroupRoutes() {

@@ -40,7 +40,7 @@ class AppList {
                 if (result[AppTable.iconRemoved]) {
                     app.icon = "https://img.iconpusher.com/removed.png"
                 } else {
-                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name]}.${result[VersionTable.extension]}"
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
                 }
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
@@ -57,7 +57,7 @@ class AppList {
         {
 //            DB.start()
             val appList = AppList()
-            val results = transaction {
+            val appResults = transaction {
                 AppTable
                 .join(VersionTable, JoinType.INNER, additionalConstraint = {
                     (VersionTable.appId eq AppTable.id) and
@@ -68,13 +68,13 @@ class AppList {
                 .limit(24)
                 .toList()
             }
-            
-            for (result in results) {
+
+            for (result in appResults) {
                 val app = App()
                 app.id = result[AppTable.id].value
                 app.name = result[AppTable.name]
                 app.packageName = result[AppTable.packageName]
-                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name]}.${result[VersionTable.extension]}"
+                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
 //                populateComponents(app)
@@ -86,6 +86,76 @@ class AppList {
             
             return appList
         }
+
+        fun latestNew():HashMap<String,AppList>
+        {
+            val appList = hashMapOf(
+                "apps" to AppList(),
+                "versions" to AppList(),
+            )
+            val all = AppList()
+            val appResults = transaction {
+                AppTable
+                .join(VersionTable, JoinType.INNER, additionalConstraint = {
+                    (VersionTable.appId eq AppTable.id) and
+                    (VersionTable.latest eq true)
+                })
+                .selectAll()
+                .orderBy(AppTable.dateAdded, SortOrder.DESC)
+                .limit(24)
+                .toList()
+            }
+
+            val versionResults = transaction {
+                AppTable
+                .join(VersionTable, JoinType.INNER, additionalConstraint = {
+                    (VersionTable.appId eq AppTable.id) and
+                    (VersionTable.latest eq true)
+                })
+                .selectAll()
+                .orderBy(VersionTable.dateCreated, SortOrder.DESC)
+                .limit(24)
+                .toList()
+            }
+
+            for (result in appResults) {
+                val app = App()
+                app.id = result[AppTable.id].value
+                app.name = result[AppTable.name]
+                app.packageName = result[AppTable.packageName]
+                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                app.version = result[VersionTable.name]
+                //app.packages.add(result[ComponentTable.componentInfo])
+//                populateComponents(app)
+                // TODO might want to change this to get all app packages in one query
+                appList["apps"]!!.apps.add(app)
+                all.apps.add(app)
+            }
+
+            for (result in versionResults) {
+                val app = App()
+                app.id = result[AppTable.id].value
+                app.name = result[AppTable.name]
+                app.packageName = result[AppTable.packageName]
+                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                app.version = result[VersionTable.name]
+                //app.packages.add(result[ComponentTable.componentInfo])
+//                populateComponents(app)
+                // TODO might want to change this to get all app packages in one query
+                appList["versions"]!!.apps.add(app)
+                all.apps.add(app)
+            }
+            populateComponents(all)
+//            populateComponents(appList["apps"]!!)
+//            populateComponents(appList["versions"]!!)
+
+
+            return appList
+        }
+
+
+
+
 
         fun device(token:String):AppList
         {
@@ -119,7 +189,7 @@ class AppList {
                 if (result[AppTable.iconRemoved]) {
                     app.icon = "https://img.iconpusher.com/removed.png"
                 } else {
-                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name]}.${result[VersionTable.extension]}"
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
                 }
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
