@@ -40,7 +40,7 @@ class AppList {
                 if (result[AppTable.iconRemoved]) {
                     app.icon = "https://img.iconpusher.com/removed.png"
                 } else {
-                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-").replace("#", "-")}.${result[VersionTable.extension]}"
                 }
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
@@ -74,7 +74,7 @@ class AppList {
                 app.id = result[AppTable.id].value
                 app.name = result[AppTable.name]
                 app.packageName = result[AppTable.packageName]
-                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/","-").replace("#", "-")}.${result[VersionTable.extension]}"
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
 //                populateComponents(app)
@@ -123,7 +123,7 @@ class AppList {
                 app.id = result[AppTable.id].value
                 app.name = result[AppTable.name]
                 app.packageName = result[AppTable.packageName]
-                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-").replace("#", "-")}.${result[VersionTable.extension]}"
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
 //                populateComponents(app)
@@ -137,7 +137,7 @@ class AppList {
                 app.id = result[AppTable.id].value
                 app.name = result[AppTable.name]
                 app.packageName = result[AppTable.packageName]
-                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-").replace("#", "-")}.${result[VersionTable.extension]}"
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])
 //                populateComponents(app)
@@ -189,7 +189,7 @@ class AppList {
                 if (result[AppTable.iconRemoved]) {
                     app.icon = "https://img.iconpusher.com/removed.png"
                 } else {
-                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-")}.${result[VersionTable.extension]}"
+                    app.icon = "https://img.iconpusher.com/${app.packageName.lowercase()}/${result[VersionTable.name].replace("/", "-").replace("#","-")}.${result[VersionTable.extension]}"
                 }
                 app.version = result[VersionTable.name]
                 //app.packages.add(result[ComponentTable.componentInfo])

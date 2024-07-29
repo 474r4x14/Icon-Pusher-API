@@ -111,8 +111,8 @@ fun Route.appRouting() {
             val oldImgFile = "$oldImgDir/${app.version}.png"
 
             // V2 image handling
-            val newImgDir = "/var/www/vhosts/iconpusher.com/img/htdocs/${app.packageName}"
-            val newImgFile = "$newImgDir/${app.version.replace("/", "-")}.png"
+            val newImgDir = "/var/www/vhosts/iconpusher.com/img/htdocs/${app.packageName.lowercase()}"
+            val newImgFile = "$newImgDir/${app.version.replace("/", "-").replace("#", "-")}.png"
 
             // Convert the image from Base64 to data
             val decodedBytes = Base64.getDecoder().decode(app.icon)
